@@ -9,7 +9,6 @@ header {
     padding: 1px 0;
 }
 
-
 .navbar.fixed-top {
     background-color: #FF4B4B !important; /* Memastikan warna tetap sesuai */
     color: white;
@@ -89,4 +88,46 @@ header {
     background-color: #E04343; /* Warna merah sedikit lebih gelap */
 }
 
+/* Register Form Styles */
+.register-form {
+    width: 100%;
+    max-width: 400px;
+    padding: 20px;
+    margin-top: 40px;  /* Jarak di atas */
+    margin-bottom: 40px;  /* Jarak di bawah */
+    border: 1px solid #ced4da;
+    border-radius: 8px;
+    background-color: #ffffff;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
 
+.register-form .form-title {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.register-form .form-group {
+    margin-bottom: 15px;
+}
+
+.register-form .form-control {
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+.register-form .btn-primary {
+    background-color: #FF4B4B;
+    border: none;
+    padding: 10px;
+    color: white;
+    width: 100%;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.register-form .btn-primary:hover {
+    background-color: #E04343;
+}

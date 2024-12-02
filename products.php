@@ -20,7 +20,7 @@ $startFrom = ($page - 1) * $productsPerPage; // Mulai dari produk ke-...
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Products - MikroTik E-Commerce</title>
     <!-- Favicon -->
-    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link rel="icon" href="favicon.ico" type="images/logo.jpg">
     <!-- Link ke file CSS eksternal -->
     <link href="style.css" rel="stylesheet">
     <!-- Bootstrap CSS -->
@@ -56,13 +56,26 @@ $startFrom = ($page - 1) * $productsPerPage; // Mulai dari produk ke-...
                         </li>
                         <li class="nav-item">
                             <a class="nav-link active" href="products.php">Products</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Login</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Register</a>
-                        </li>
+                            <?php if(isset($_SESSION['username'])): ?>
+                            <li class="nav-item">
+                                <a class="nav-link" href="cart.php">Cart</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="transaction_detail.php">Transactions</a>
+                            </li>
+                            <!-- Jika user sudah login, tampilkan logout -->
+                            <li class="nav-item">
+                                <a class="nav-link" href="logout.php">Logout</a>
+                            </li>
+                        <?php else: ?>
+                            <!-- Jika user belum login, tampilkan login dan register -->
+                            <li class="nav-item">
+                                <a class="nav-link" href="loginform.php">Login</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="registerform.php">Register</a>
+                            </li>
+                        <?php endif; ?>
                     </ul>
 
                     <!-- Search Form -->

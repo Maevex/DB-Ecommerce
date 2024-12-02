@@ -1,6 +1,5 @@
 <?php
-//if (session_status() !== PHP_SESSION_ACTIVE) {session_start();}
-if(session_id() == '' || !isset($_SESSION)){session_start();}
+if(session_id() == '' || !isset($_SESSION)){ session_start(); }
 ?>
 
 <!DOCTYPE html>
@@ -9,11 +8,8 @@ if(session_id() == '' || !isset($_SESSION)){session_start();}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MikroTik E-Commerce</title>
-    <!-- Favicon -->
     <link rel="icon" href="favicon.ico" type="images/logo.jpg">
-    <!-- Link ke file CSS eksternal -->
     <link href="style.css" rel="stylesheet">
-    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
@@ -35,12 +31,28 @@ if(session_id() == '' || !isset($_SESSION)){session_start();}
                         <li class="nav-item">
                             <a class="nav-link" href="products.php">Products</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Login</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Register</a>
-                        </li>
+                        <?php if(isset($_SESSION['username'])): ?>
+
+                            <li class="nav-item">
+                                <a class="nav-link" href="cart.php">Cart</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="transaction_detail.php">Transactions</a>
+                            </li>
+                            <!-- Jika user sudah login, tampilkan logout -->
+
+                            <li class="nav-item">
+                                <a class="nav-link" href="logout.php">Logout</a>
+                            </li>
+                        <?php else: ?>
+                            <!-- Jika user belum login, tampilkan login dan register -->
+                            <li class="nav-item">
+                                <a class="nav-link" href="loginform.php">Login</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="registerform.php">Register</a>
+                            </li>
+                        <?php endif; ?>
                     </ul>
                 </div>
             </div>
@@ -59,21 +71,17 @@ if(session_id() == '' || !isset($_SESSION)){session_start();}
         <h2 class="text-center mb-4">Our Products</h2>
         <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
             <?php
-            // Mengambil koneksi database dari file eksternal
-            include 'config.php'; // Pastikan file config.php sudah ada dan terhubung ke database
+            include 'config.php'; 
 
-            // Query untuk mengambil data produk
-            $query = "SELECT product_name, product_price, product_image FROM product LIMIT 4";
+            $query = "SELECT product_id, product_name, product_price, product_image FROM product LIMIT 4";
             $result = mysqli_query($conn, $query);
 
-            // Mengecek apakah ada data produk
             if (mysqli_num_rows($result) > 0) {
-                // Loop melalui setiap produk
                 while ($row = mysqli_fetch_assoc($result)) {
+                    $productId = $row['product_id']; // Fetch product_id
                     $productName = $row['product_name'];
                     $productPrice = $row['product_price'];
                     $productImage = $row['product_image'];
-                    // Menampilkan setiap produk dalam format card
                     echo '
                     <div class="col">
                         <div class="card h-100">
@@ -81,13 +89,12 @@ if(session_id() == '' || !isset($_SESSION)){session_start();}
                             <div class="card-body">
                                 <h5 class="card-title">' . $productName . '</h5>
                                 <p class="card-text">Price: $' . number_format($productPrice, 2) . '</p>
-                                <a href="#" class="btn btn-primary">View Details</a>
+                                <a href="productDetails.php?id=' . $productId . '" class="btn btn-primary">View Details</a>
                             </div>
                         </div>
                     </div>';
                 }
             } else {
-                // Jika tidak ada data produk
                 echo '<p class="text-center">No products available.</p>';
             }
             ?>
@@ -99,7 +106,6 @@ if(session_id() == '' || !isset($_SESSION)){session_start();}
         <p>&copy; 2024 MikroTik E-Commerce | All Rights Reserved</p>
     </footer>
 
-    <!-- Bootstrap JS and Popper.js -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
 </body>

@@ -10,7 +10,7 @@ if ($productID) {
     include 'config.php';
 
     // Query untuk mengambil data produk berdasarkan ID
-    $query = "SELECT product_name, product_price, product_image, product_description, category_name
+    $query = "SELECT product_name, product_price, product_image, product_description, category_name, product_stock
               FROM product
               JOIN category ON product.category_id = category.category_id
               WHERE product.product_id = $productID";
@@ -24,6 +24,7 @@ if ($productID) {
         $productImage = $product['product_image'];
         $productDescription = $product['product_description'];
         $categoryName = $product['category_name'];
+        $ProductStock = $product['product_stock'];
     } else {
         // Jika produk tidak ditemukan
         echo '<p class="text-center">Product not found.</p>';
@@ -65,12 +66,24 @@ if ($productID) {
                         <li class="nav-item">
                             <a class="nav-link" href="products.php">Products</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Login</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Register</a>
-                        </li>
+                        <?php if(isset($_SESSION['username'])): ?>
+                            <li class="nav-item">
+                                <a class="nav-link" href="cart.php">Cart</a>
+                            </li>
+                            
+                            <!-- Jika user sudah login, tampilkan logout -->
+                            <li class="nav-item">
+                                <a class="nav-link" href="logout.php">Logout</a>
+                            </li>
+                        <?php else: ?>
+                            <!-- Jika user belum login, tampilkan login dan register -->
+                            <li class="nav-item">
+                                <a class="nav-link" href="loginform.php">Login</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="registerform.php">Register</a>
+                            </li>
+                        <?php endif; ?>
                     </ul>
                 </div>
             </div>
@@ -89,8 +102,16 @@ if ($productID) {
                 <p><strong>Price:</strong> $<?php echo number_format($productPrice, 2); ?></p>
                 <p><strong>Description:</strong></p>
                 <p><?php echo nl2br($productDescription); ?></p>
+                <p><strong>Stock:</strong> <?php echo number_format($ProductStock); ?> </p> 
                 <a href="products.php" class="btn btn-secondary">Back to Products</a>
+                <form action="add_to_cart.php" method="POST">
+    <input type="hidden" name="product_id" value="<?php echo $productID; ?>">
+    <input type="number" name="quantity" value="1" min="1" class="form-control w-25 my-3">
+    <button type="submit" class="btn btn-primary">Add to Cart</button>
+</form>
+
             </div>
+            
         </div>
     </section>
 
