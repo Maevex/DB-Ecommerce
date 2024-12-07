@@ -9,22 +9,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $last_name = mysqli_real_escape_string($conn, $_POST['last_name']);
     $email = mysqli_real_escape_string($conn, $_POST['email']);
     $phone_number = mysqli_real_escape_string($conn, $_POST['phone_number']);
+    $customer_address = mysqli_real_escape_string($conn, $_POST['customer_address']);
     $username = mysqli_real_escape_string($conn, $_POST['username']);
     $password = mysqli_real_escape_string($conn, $_POST['password']);
     $hashed_password = password_hash($password, PASSWORD_DEFAULT); // Enkripsi password
 
     // Masukkan data ke tabel customer
-    $query = "INSERT INTO customer (first_name, last_name, email, phone_number) 
-          VALUES ('$first_name', '$last_name', '$email', '$phone_number')";
+    $query = "INSERT INTO customer (first_name, last_name, email, phone_number, customer_address) 
+          VALUES ('$first_name', '$last_name', '$email', '$phone_number', '$customer_address' )";
 
     if (mysqli_query($conn, $query)) {
         // Ambil customer_id yang baru saja dimasukkan
         $customer_id = mysqli_insert_id($conn);
 
         // Masukkan data login ke tabel login
-        $role = 'pelanggan'; // Default role adalah pelanggan
-        $query_login = "INSERT INTO login (customer_id, username, password, role) 
-                        VALUES ('$customer_id', '$username', '$hashed_password', '$role')";
+        // Default role adalah pelanggan
+        $query_login = "INSERT INTO login (customer_id, username, password) 
+                        VALUES ('$customer_id', '$username', '$hashed_password')";
         if (mysqli_query($conn, $query_login)) {
             // Jika berhasil, redirect ke halaman login
             header("Location: index.php");

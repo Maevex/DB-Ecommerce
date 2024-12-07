@@ -33,16 +33,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $_SESSION['username'] = $user['username'];
             $_SESSION['login_id'] = $user['login_id'];
             $_SESSION['customer_id'] = $user['customer_id'];
-            $_SESSION['role'] = $user['role']; // Role admin/pelanggan
+            
 
-            // Redirect sesuai role
-            if ($user['role'] == 'pelanggan') {
-                $_SESSION['alert'] = "Login berhasil sebagai Pelanggan!";
-                header("Location: index.php");
-            } elseif ($user['role'] == 'admin') {
-                $_SESSION['alert'] = "Login berhasil sebagai Admin!";
-                header("Location: admin.php");
-            }
+            $_SESSION['alert'] = "Login berhasil!";
+            // Redirect ke halaman utama setelah login
+            header("Location: index.php");
             exit;
         } else {
             $_SESSION['alert'] = "Username atau password salah!";

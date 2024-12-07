@@ -78,6 +78,10 @@ if(session_id() == '' || !isset($_SESSION)){session_start();}
                 <input type="text" class="form-control" id="phone" name="phone_number" required>
             </div>
             <div class="mb-3">
+                <label for="phone" class="form-label">Address</label>
+                <input type="text" class="form-control" id="address" name="customer_address" required>
+            </div>
+            <div class="mb-3">
                 <label for="username" class="form-label">Username</label>
                 <input type="text" class="form-control" id="username" name="username" required>
             </div>
