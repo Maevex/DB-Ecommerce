@@ -1,5 +1,12 @@
 <?php
-if(session_id() == '' || !isset($_SESSION)){ session_start(); }
+session_start();
+
+// Cek apakah pengguna sudah login
+if (!isset($_SESSION['admin'])) {
+    // Jika belum login, arahkan ke halaman login
+    header("Location: admin/login_form.php");
+    exit();
+}
 
 // Konfigurasi pagination
 $productsPerPage = 8; // Jumlah produk yang ditampilkan per halaman
@@ -30,18 +37,15 @@ $startFrom = ($page - 1) * $productsPerPage; // Mulai dari produk ke-...
             height: 100px; /* Ukuran gambar lebih kecil */
             object-fit: fill; /* Membuat gambar mengisi area card */
         }
-        .card {
-            height: 100%; /* Memastikan card mengisi seluruh ruang */
-        }
         body {
-        padding-top: 40px; /* Sesuaikan dengan tinggi navbar */
-    }
+            padding-top: 40px; /* Sesuaikan dengan tinggi navbar */
+        }
     </style>
 </head>
 <body>
     <!-- Header -->
     <header>
-        <nav class="navbar navbar-expand-lg navbar-dark  fixed-top">
+        <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
             <div class="container-fluid">
                 <a class="navbar-brand" href="index.php">
                     <img src="images/logo.jpg" alt="Logo"> Lintas Buana
@@ -56,29 +60,22 @@ $startFrom = ($page - 1) * $productsPerPage; // Mulai dari produk ke-...
                         </li>
                         <li class="nav-item">
                             <a class="nav-link active" href="products.php">Products</a>
-                            <?php if(isset($_SESSION['username'])): ?>
+                           <?php if(isset($_SESSION['admin'])): ?>
                             <li class="nav-item">
-                                <a class="nav-link" href="cart.php">Cart</a>
+                                <a class="nav-link" href="transactions.php">Transactions</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="transaction_detail.php">Transactions</a>
-                            </li>
-                            <!-- Jika user sudah login, tampilkan logout -->
-                            <li class="nav-item">
-                                <a class="nav-link" href="logout.php">Logout</a>
+                                <a class="nav-link" href="admin/logout.php">Logout</a>
                             </li>
                         <?php else: ?>
-                            <!-- Jika user belum login, tampilkan login dan register -->
                             <li class="nav-item">
-                                <a class="nav-link" href="loginform.php">Login</a>
+                                <a class="nav-link" href="admin/login.php">Login</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="registerform.php">Register</a>
+                                <a class="nav-link" href="admin/register.php">Register</a>
                             </li>
                         <?php endif; ?>
                     </ul>
-
-                    <!-- Search Form -->
                     <form class="d-flex ms-auto" method="GET" action="products.php">
                         <input class="form-control me-2" type="search" placeholder="Search products" aria-label="Search" name="search" value="<?php echo $searchQuery; ?>">
                         <button class="btn btn-outline-light" type="submit">Search</button>
@@ -91,49 +88,70 @@ $startFrom = ($page - 1) * $productsPerPage; // Mulai dari produk ke-...
     <!-- Products Section -->
     <section id="products" class="container my-5">
         <h2 class="text-center mb-4">Our Products</h2>
-        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
-            <?php
-            // Mengambil koneksi database dari file eksternal
-            include 'config.php'; // Pastikan file config.php sudah ada dan terhubung ke database
 
-            // Query untuk mengambil data produk dengan pagination dan pencarian
-            if ($searchQuery != '') {
-                $query = "SELECT product_id, product_name, product_price, product_image FROM product WHERE product_name LIKE '%$searchQuery%' LIMIT $startFrom, $productsPerPage";
-            } else {
-                $query = "SELECT product_id, product_name, product_price, product_image FROM product LIMIT $startFrom, $productsPerPage";
-            }
-            $result = mysqli_query($conn, $query);
+        <a href="add_product_form.php?id=' . $productId . '" class="btn btn-primary btn-sm">Add</a>
 
-            // Mengecek apakah ada data produk
-            if (mysqli_num_rows($result) > 0) {
-                // Loop melalui setiap produk
-                while ($row = mysqli_fetch_assoc($result)) {
-                    $productId = $row['product_id'];
-                    $productName = $row['product_name'];
-                    $productPrice = $row['product_price'];
-                    $productImage = $row['product_image'];
-                    // Menampilkan setiap produk dalam format card
-                    echo '
-                    <div class="col">
-                        <div class="card h-100">
-                            <img src="' . $productImage . '" class="card-img-top" alt="' . $productName . '" style="height: 200px; object-fit: fill;">
-                            <div class="card-body">
-                                <h5 class="card-title">' . $productName . '</h5>
-                                <p class="card-text">RP.' . number_format($productPrice, 2) . '</p>
-                                <a href="productDetails.php?id=' . $productId . '" class="btn btn-primary">View Details</a>
-                            </div>
-                        </div>
-                    </div>';
+        <!-- Tabel Produk -->
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Product Name</th>
+                    <th>Category</th>
+                    <th>Image</th>
+                    <th>Stock</th>
+                    <th>Actions</th> <!-- Kolom Actions -->
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                include 'config.php'; // Koneksi ke database
+
+                // Query untuk mengambil data produk
+                if ($searchQuery != '') {
+                    $query = "SELECT p.product_id, p.product_name, p.product_image, p.product_stock, c.category_name
+                              FROM product p
+                              JOIN category c ON p.category_id = c.category_id
+                              WHERE p.product_name LIKE '%$searchQuery%' LIMIT $startFrom, $productsPerPage";
+                } else {
+                    $query = "SELECT p.product_id, p.product_name, p.product_image, p.product_stock, c.category_name
+                              FROM product p
+                              JOIN category c ON p.category_id = c.category_id
+                              LIMIT $startFrom, $productsPerPage";
                 }
-            } else {
-                // Jika tidak ada data produk
-                echo '<p class="text-center">No products found.</p>';
-            }
-            ?>
-        </div>
+                $result = mysqli_query($conn, $query);
+
+                
+                if (mysqli_num_rows($result) > 0) {
+                    // Loop melalui setiap produk
+                    while ($row = mysqli_fetch_assoc($result)) {
+                        $productId = $row['product_id'];
+                        $productName = $row['product_name'];
+                        $categoryName = $row['category_name'];
+                        $productImage = $row['product_image'];
+                        $productStock = $row['product_stock'];
+                        // Menampilkan setiap produk dalam format tabel
+                        echo '
+                        <tr>
+                            <td>' . $productName . '</td>
+                            <td>' . $categoryName . '</td>
+                            <td><img src="' . $productImage . '" alt="' . $productName . '" style="width: 100px; height: 100px; object-fit: cover;"></td>
+                            <td>' . $productStock . '</td>
+                            <td>
+                                <a href="edit_product_form.php?id=' . $productId . '" class="btn btn-warning btn-sm">Edit</a>
+                                <a href="delete.php?id=' . $productId . '" class="btn btn-danger btn-sm">Delete</a>
+                            </td>
+                        </tr>';
+                    }
+                } else {
+                    // Jika tidak ada data produk
+                    echo '<tr><td colspan="5" class="text-center">No products found.</td></tr>';
+                }
+                ?>
+            </tbody>
+        </table>
 
         <!-- Pagination -->
-        <nav aria-label="Page navigation" class="mt-4"> <!-- Menambahkan margin-top pada pagination -->
+        <nav aria-label="Page navigation" class="mt-4">
             <ul class="pagination justify-content-center">
                 <?php
                 // Query untuk menghitung total produk
@@ -169,3 +187,4 @@ $startFrom = ($page - 1) * $productsPerPage; // Mulai dari produk ke-...
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
 </body>
 </html>
+
