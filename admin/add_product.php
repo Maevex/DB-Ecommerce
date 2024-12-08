@@ -11,6 +11,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $newCategory = sanitize($_POST['new_category']);
     $productDescription = sanitize($_POST['product_description']);
     $productStock = sanitize($_POST['product_stock']);
+    $productprice = sanitize($_POST['product_price']);
 
     // Jika ada kategori baru yang dimasukkan, tambahkan ke database
     if (!empty($newCategory)) {
@@ -40,8 +41,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if (move_uploaded_file($_FILES["product_image"]["tmp_name"], $productImage)) {
         // Simpan data produk ke database
-        $query = "INSERT INTO product (product_name, category_id, product_description, product_stock, product_image) 
-                  VALUES ('$productName', '$categoryId', '$productDescription', '$productStock', '$productImage')";
+        $query = "INSERT INTO product (product_name, category_id, product_description, product_stock, product_price, product_image) 
+                  VALUES ('$productName', '$categoryId', '$productDescription', '$productStock', '$productprice', '$productImage')";
 
         if (mysqli_query($conn, $query)) {
             header("Location: products.php?status=added");

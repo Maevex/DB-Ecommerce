@@ -47,6 +47,10 @@ include 'config.php'; // Menyertakan file koneksi
                 <textarea id="product_description" name="product_description" rows="4" required></textarea><br>
             </div>
             <div class="mb-3">
+                <label for="product_price" class="form-label">Price</label>
+                <input type="number" class="form-control" id="product_price" name="product_price" min="0" required>
+            </div>
+            <div class="mb-3">
                 <label for="product_stock" class="form-label">Stock</label>
                 <input type="number" class="form-control" id="product_stock" name="product_stock" min="0" required>
             </div>

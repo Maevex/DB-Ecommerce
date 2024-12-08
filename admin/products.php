@@ -98,6 +98,7 @@ $startFrom = ($page - 1) * $productsPerPage; // Mulai dari produk ke-...
                     <th>Product Name</th>
                     <th>Category</th>
                     <th>Image</th>
+                    <th>Price</th>
                     <th>Stock</th>
                     <th>Actions</th> <!-- Kolom Actions -->
                 </tr>
@@ -108,12 +109,12 @@ $startFrom = ($page - 1) * $productsPerPage; // Mulai dari produk ke-...
 
                 // Query untuk mengambil data produk
                 if ($searchQuery != '') {
-                    $query = "SELECT p.product_id, p.product_name, p.product_image, p.product_stock, c.category_name
+                    $query = "SELECT p.product_id, p.product_name, p.product_image, p.product_price, p.product_stock, c.category_name
                               FROM product p
                               JOIN category c ON p.category_id = c.category_id
                               WHERE p.product_name LIKE '%$searchQuery%' LIMIT $startFrom, $productsPerPage";
                 } else {
-                    $query = "SELECT p.product_id, p.product_name, p.product_image, p.product_stock, c.category_name
+                    $query = "SELECT p.product_id, p.product_name, p.product_image, p.product_price, p.product_stock, c.category_name
                               FROM product p
                               JOIN category c ON p.category_id = c.category_id
                               LIMIT $startFrom, $productsPerPage";
@@ -128,6 +129,7 @@ $startFrom = ($page - 1) * $productsPerPage; // Mulai dari produk ke-...
                         $productName = $row['product_name'];
                         $categoryName = $row['category_name'];
                         $productImage = $row['product_image'];
+                        $productprice = $row['product_price'];
                         $productStock = $row['product_stock'];
                         // Menampilkan setiap produk dalam format tabel
                         echo '
@@ -135,6 +137,7 @@ $startFrom = ($page - 1) * $productsPerPage; // Mulai dari produk ke-...
                             <td>' . $productName . '</td>
                             <td>' . $categoryName . '</td>
                             <td><img src="' . $productImage . '" alt="' . $productName . '" style="width: 100px; height: 100px; object-fit: cover;"></td>
+                            <td>' . $productprice . '</td>
                             <td>' . $productStock . '</td>
                             <td>
                                 <a href="edit_product_form.php?id=' . $productId . '" class="btn btn-warning btn-sm">Edit</a>
