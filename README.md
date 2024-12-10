@@ -49,7 +49,7 @@ http://localhost/DB-Ecommerce
 ### 1. **User Page**
 - **Cart System**: Users can add products to the cart, modify quantities, and checkout.  
 - **Transactions**: Complete transaction handling with a detailed history.  
-- **Login/Register**: Secure login system (password hashed with Bcrypt).  
+- **Login/Register**: Secure login system (password hashed with md5).  
 - **Search Functionality**: Find products easily.  
 - **User CRUD**: Users can update their account details.  
 
@@ -92,7 +92,7 @@ Here’s a breakdown of the database structure:
 ---
 
 ## 🔒 **Security Measures**
-- Passwords are securely hashed using **Bcrypt** for login systems.  
+- Passwords are securely hashed using md5 for login systems.  
 - Database relationships are enforced with **Foreign Keys** to maintain integrity.  
 - Admin panel access is restricted to authenticated users.  
 
@@ -119,7 +119,7 @@ Here’s a breakdown of the database structure:
 
 ### **Admin Login**  
 - **Username**: `aku`  
-- **Password**: `test123` (use hashed version in your setup)  
+- **Password**: `test123` (use md5 hashed version in your setup)  
 
 ### **User Login**  
 - Use the sample data provided in the `customer` table.  
