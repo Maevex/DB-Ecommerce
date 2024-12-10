@@ -41,6 +41,6 @@ This is an e-commerce application designed to help users browse products, add th
 
 1. Clone this repository to your local machine inside `xampp/htdocs` folder:
    ```bash
-   git clone https://github.com/Maevex/DB-Ecommerce.git
+   git clone https://github.com/Maevex/DB-Ecommerce.git C:/xampp/htdocs/e-commerce-project
 2. Import the database structure provided in the `mikrotik(5).sql` file into your MySQL database and name it as `mikrotik`.
 3. Run the application by navigating to your project directory and opening either admin folder or cust folder (admin is for admin or sellers and cust is for customers).
