@@ -5,20 +5,22 @@ This is an e-commerce application designed to help users browse products, add th
 ## Features
 
 - **Customer Features:**
-  - View and browse products by categories.
+  - View and browse products.
   - Add products to the shopping cart.
   - Checkout and complete purchases.
   - Manage account (login/logout).
+  - view transaction history.
+  - view transaction receipt.
   
 - **Admin Features:**
   - Manage product listings (add, update, delete).
   - Manage product categories.
-  - View transaction history.
+  - manage transaction history.
   
 ## Technologies Used
 
 - **Frontend:** 
-  - HTML, CSS, JavaScript, Bootstrap for responsive design.
+  - HTML, CSS, Bootstrap
   
 - **Backend:**
   - PHP for server-side processing.
