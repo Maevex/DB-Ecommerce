@@ -70,7 +70,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // Commit transaksi
             mysqli_commit($conn);
             $_SESSION['alert'] = "Checkout berhasil!";
-            header("Location: transaction_history.php");
+            header("Location: transaction_detail.php");
             exit;
         } catch (Exception $e) {
             // Rollback jika ada error

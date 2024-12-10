@@ -99,7 +99,7 @@ if ($productID) {
             <div class="col-md-6">
                 <h2><?php echo $productName; ?></h2>
                 <p><strong>Category:</strong> <?php echo $categoryName; ?></p>
-                <p><strong>Price:</strong> $<?php echo number_format($productPrice, 2); ?></p>
+                <p><strong>Price:</strong> RP. <?php echo number_format($productPrice, 2); ?></p>
                 <p><strong>Description:</strong></p>
                 <p><?php echo nl2br($productDescription); ?></p>
                 <p><strong>Stock:</strong> <?php echo number_format($ProductStock); ?> </p> 
