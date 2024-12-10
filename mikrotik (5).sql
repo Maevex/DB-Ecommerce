@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 08, 2024 at 10:41 AM
+-- Generation Time: Dec 10, 2024 at 04:05 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -57,7 +57,8 @@ CREATE TABLE `cart` (
 --
 
 INSERT INTO `cart` (`cart_id`, `customer_id`) VALUES
-(4, 4);
+(4, 4),
+(5, 7);
 
 -- --------------------------------------------------------
 
@@ -163,10 +164,9 @@ CREATE TABLE `product` (
 --
 
 INSERT INTO `product` (`product_id`, `product_name`, `product_price`, `product_description`, `category_id`, `product_image`, `product_stock`) VALUES
-(1, 'gigarouteer', 20000.00, 'asdqwdsadsadqwdasdqwdqwdasdasdqweqw', 1, 'images/yy.jpg', 7),
-(22, 'rout2', 0.00, NULL, 1, 'images/logo.jpg', 30),
-(25, 'asdasd', 0.00, 'qweqew', 1, 'images/yy.jpg', 80),
-(26, 'hubs', 0.00, 'asdasd', 2, 'images/yy.jpg', 80);
+(1, 'gigarouteer', 20000.00, 'asdqwdsadsadqwdasdqwdqwdasdasdqweqw', 1, 'images/yy.jpg', 5),
+(22, 'rout2', 0.00, NULL, 1, 'images/logo.jpg', 28),
+(27, 'rrrrr', 30000.00, 'qweeerrrrre', 1, 'images/yy.jpg', 3);
 
 -- --------------------------------------------------------
 
@@ -188,7 +188,11 @@ INSERT INTO `transaction` (`transaction_id`, `transaction_date`, `customer_id`) 
 (4, '2024-11-21 10:41:29', 4),
 (5, '2024-11-21 10:43:27', 4),
 (6, '2024-11-21 11:50:46', 4),
-(7, '2024-11-22 00:52:56', 4);
+(7, '2024-11-22 00:52:56', 4),
+(8, '2024-12-08 14:33:15', 7),
+(9, '2024-12-10 01:39:57', 4),
+(10, '2024-12-10 01:59:29', 4),
+(11, '2024-12-10 02:30:30', 4);
 
 -- --------------------------------------------------------
 
@@ -201,17 +205,23 @@ CREATE TABLE `transaction_detail` (
   `transaction_id` int(11) DEFAULT NULL,
   `product_id` int(11) DEFAULT NULL,
   `quantity` int(11) DEFAULT NULL,
-  `total_price` decimal(10,2) DEFAULT NULL
+  `total_price` decimal(10,2) DEFAULT NULL,
+  `status` enum('cancelled','process','complete') DEFAULT 'process'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `transaction_detail`
 --
 
-INSERT INTO `transaction_detail` (`transaction_detail_id`, `transaction_id`, `product_id`, `quantity`, `total_price`) VALUES
-(1, 4, 1, 4, 80000.00),
-(3, 6, 1, 3, 60000.00),
-(4, 7, 1, 3, 60000.00);
+INSERT INTO `transaction_detail` (`transaction_detail_id`, `transaction_id`, `product_id`, `quantity`, `total_price`, `status`) VALUES
+(1, 4, 1, 4, 80000.00, 'complete'),
+(3, 6, 1, 3, 60000.00, 'process'),
+(4, 7, 1, 3, 60000.00, 'process'),
+(7, 9, 27, 2, 60000.00, 'process'),
+(8, 10, 22, 2, 0.00, 'process'),
+(9, 10, 27, 2, 60000.00, 'process'),
+(10, 11, 1, 2, 40000.00, 'process'),
+(11, 11, 27, 2, 60000.00, 'process');
 
 --
 -- Indexes for dumped tables
@@ -295,13 +305,13 @@ ALTER TABLE `admin`
 -- AUTO_INCREMENT for table `cart`
 --
 ALTER TABLE `cart`
-  MODIFY `cart_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `cart_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `cart_items`
 --
 ALTER TABLE `cart_items`
-  MODIFY `cart_item_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `cart_item_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT for table `category`
@@ -325,19 +335,19 @@ ALTER TABLE `login`
 -- AUTO_INCREMENT for table `product`
 --
 ALTER TABLE `product`
-  MODIFY `product_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+  MODIFY `product_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
 
 --
 -- AUTO_INCREMENT for table `transaction`
 --
 ALTER TABLE `transaction`
-  MODIFY `transaction_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `transaction_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `transaction_detail`
 --
 ALTER TABLE `transaction_detail`
-  MODIFY `transaction_detail_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `transaction_detail_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- Constraints for dumped tables
