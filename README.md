@@ -41,4 +41,4 @@ This is an e-commerce application designed to help users browse products, add th
 
 1. Clone this repository to your local machine:
    ```bash
-   git clone https://github.com/yourusername/e-commerce-project.git
+   git clone https://github.com/Maevex/DB-Ecommerce.git
