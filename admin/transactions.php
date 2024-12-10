@@ -23,7 +23,7 @@ if ($searchQuery != '') {
     $query = "SELECT t.transaction_id, t.transaction_date, 
                  CONCAT(c.first_name, ' ', c.last_name) AS customer_name, 
                  c.email, c.phone_number, 
-                 p.product_name, td.quantity, td.total_price
+                 p.product_name, td.quantity, td.total_price, td.status
           FROM transaction t
           JOIN transaction_detail td ON t.transaction_id = td.transaction_id
           JOIN customer c ON t.customer_id = c.customer_id
@@ -38,7 +38,7 @@ if ($searchQuery != '') {
     $query = "SELECT t.transaction_id, t.transaction_date, 
                      CONCAT(c.first_name, ' ', c.last_name) AS customer_name, 
                      c.email, c.phone_number, 
-                     p.product_name, td.quantity, td.total_price
+                     p.product_name, td.quantity, td.total_price , td.status
               FROM transaction t
               JOIN transaction_detail td ON t.transaction_id = td.transaction_id
               JOIN customer c ON t.customer_id = c.customer_id
@@ -66,7 +66,6 @@ $result = mysqli_query($conn, $query);
             padding-top: 40px; /* Sesuaikan dengan tinggi navbar */
         }
     </style>
-
 </head>
 <body>
     <!-- Header -->
@@ -125,6 +124,8 @@ $result = mysqli_query($conn, $query);
                     <th>Product Name</th>
                     <th>Quantity</th>
                     <th>Total Price</th>
+                    <th>Status</th>
+                    <th>Action</th>
                 </tr>
             </thead>
             <tbody>
@@ -139,10 +140,14 @@ $result = mysqli_query($conn, $query);
                                 <td>' . $row['product_name'] . '</td>
                                 <td>' . $row['quantity'] . '</td>
                                 <td>' . $row['total_price'] . '</td>
+                                <td>' . $row['status'] . '</td>
+                                <td>
+                                    <a href="edit_transaction.php?transaction_id=' . $row['transaction_id'] . '" class="btn btn-primary btn-sm">Edit</a>
+                                </td>
                               </tr>';
                     }
                 } else {
-                    echo '<tr><td colspan="7" class="text-center">No transactions found.</td></tr>';
+                    echo '<tr><td colspan="9" class="text-center">No transactions found.</td></tr>';
                 }
                 ?>
             </tbody>
