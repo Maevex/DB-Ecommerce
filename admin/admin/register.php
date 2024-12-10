@@ -26,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($result) {
             $_SESSION['alert'] = "Registration successful! Please login.";
-            header("Location: login.php");
+            header("Location: login_form.php");
             exit;
         } else {
             $error = "Error during registration. Please try again!";
