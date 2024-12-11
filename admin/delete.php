@@ -18,6 +18,6 @@ if (isset($_GET['id'])) {
     }
 } else {
     echo "No ID found.";
-    echo "wkwk";
+    echo "wkwkwk";
 }
 ?>
