@@ -63,6 +63,10 @@ if (isset($_POST['confirm_payment'])) {
                                         WHERE c.customer_id = '$customer_id'";
                     mysqli_query($conn, $queryDeleteCart);
 
+                    //hapus data cart
+                    $queryDeleteCart = "DELETE FROM cart WHERE customer_id = '$customer_id'";
+                    mysqli_query($conn, $queryDeleteCart);
+
                     $_SESSION['alert'] = "Pembayaran berhasil! Transaksi Anda sedang diproses.";
                     header("Location: transaction_history.php");
                     exit;
