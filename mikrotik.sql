@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 13, 2024 at 10:25 AM
+-- Generation Time: Dec 15, 2024 at 01:03 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -62,8 +62,7 @@ CREATE TABLE `cart` (
 
 INSERT INTO `cart` (`cart_id`, `customer_id`) VALUES
 (8, 4),
-(9, 5),
-(11, 7);
+(9, 5);
 
 -- --------------------------------------------------------
 
@@ -73,10 +72,10 @@ INSERT INTO `cart` (`cart_id`, `customer_id`) VALUES
 
 CREATE TABLE `cart_items` (
   `cart_item_id` int(11) NOT NULL,
-  `cart_id` int(11) DEFAULT NULL,
-  `product_id` int(11) DEFAULT NULL,
-  `quantity` int(11) DEFAULT 1,
-  `total_price` decimal(10,2) DEFAULT NULL
+  `cart_id` int(11) NOT NULL,
+  `product_id` int(11) NOT NULL,
+  `quantity` int(11) NOT NULL DEFAULT 1,
+  `total_price` decimal(10,2) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -84,11 +83,7 @@ CREATE TABLE `cart_items` (
 --
 
 INSERT INTO `cart_items` (`cart_item_id`, `cart_id`, `product_id`, `quantity`, `total_price`) VALUES
-(25, 9, 1, 3, 60000.00),
-(26, 9, 22, 3, 60000.00),
-(27, 8, 22, 2, 40000.00),
-(36, 11, 1, 1, 20000.00),
-(37, 11, 22, 1, 20000.00);
+(25, 9, 1, 3, 60000.00);
 
 -- --------------------------------------------------------
 
@@ -147,7 +142,7 @@ INSERT INTO `customer` (`customer_id`, `first_name`, `last_name`, `email`, `phon
 
 CREATE TABLE `login` (
   `login_id` int(11) NOT NULL,
-  `customer_id` int(11) DEFAULT NULL,
+  `customer_id` int(11) NOT NULL,
   `username` varchar(100) NOT NULL,
   `password` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -178,9 +173,9 @@ CREATE TABLE `product` (
   `product_name` varchar(100) NOT NULL,
   `product_price` decimal(10,2) NOT NULL,
   `product_description` text DEFAULT NULL,
-  `category_id` int(11) DEFAULT NULL,
+  `category_id` int(11) NOT NULL,
   `product_image` varchar(255) NOT NULL,
-  `product_stock` int(11) DEFAULT NULL
+  `product_stock` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -188,9 +183,8 @@ CREATE TABLE `product` (
 --
 
 INSERT INTO `product` (`product_id`, `product_name`, `product_price`, `product_description`, `category_id`, `product_image`, `product_stock`) VALUES
-(1, 'router1', 20000.00, 'asdqwdsadsadqwdasdqwdqwdasdasdqweqw', 1, 'images/yy.jpg', 12),
-(22, 'rout2', 20000.00, 'dasdqdwqd', 1, 'images/yy.jpg', 24),
-(27, 'hub1', 30000.00, 'qweeerrrrre', 2, 'images/yy.jpg', 7);
+(1, 'router1', 20000.00, 'asdqwdsadsadqwdasdqwdqwdasdasdqweqw', 1, 'images/yy.jpg', 11),
+(22, 'rout2', 20000.00, 'dasdqdwqd', 1, 'images/yy.jpg', 22);
 
 -- --------------------------------------------------------
 
@@ -209,10 +203,9 @@ CREATE TABLE `transaction` (
 --
 
 INSERT INTO `transaction` (`transaction_id`, `transaction_date`, `customer_id`) VALUES
-(22, '2024-12-12 14:41:18', 7),
-(23, '2024-12-12 14:42:06', 7),
-(24, '2024-12-13 08:02:25', 7),
-(25, '2024-12-13 08:06:55', 7);
+(26, '2024-12-13 11:06:57', 7),
+(27, '2024-12-13 11:07:24', 7),
+(28, '2024-12-13 17:16:27', 7);
 
 -- --------------------------------------------------------
 
@@ -227,18 +220,17 @@ CREATE TABLE `transaction_detail` (
   `quantity` int(11) DEFAULT NULL,
   `total_price` decimal(10,2) DEFAULT NULL,
   `status` enum('cancelled','pending','completed') DEFAULT 'pending',
-  `payment_proof` varchar(255) DEFAULT NULL
+  `payment_proof` varchar(255) DEFAULT NULL,
+  `transaction_description` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `transaction_detail`
 --
 
-INSERT INTO `transaction_detail` (`transaction_detail_id`, `transaction_id`, `product_id`, `quantity`, `total_price`, `status`, `payment_proof`) VALUES
-(22, 22, 1, 2, 40000.00, 'completed', 'uploads/proof.jpeg'),
-(23, 23, 1, 2, 40000.00, 'completed', 'uploads/proof.jpeg'),
-(24, 24, 1, 2, 40000.00, 'pending', 'uploads/proof.jpeg'),
-(25, 25, 1, 2, 40000.00, 'pending', 'uploads/proof.jpeg');
+INSERT INTO `transaction_detail` (`transaction_detail_id`, `transaction_id`, `product_id`, `quantity`, `total_price`, `status`, `payment_proof`, `transaction_description`) VALUES
+(27, 27, 1, 1, 20000.00, 'pending', NULL, ''),
+(28, 28, 1, 2, 40000.00, 'cancelled', 'uploads/proof.jpeg', 'berhasil');
 
 --
 -- Indexes for dumped tables
@@ -328,7 +320,7 @@ ALTER TABLE `cart`
 -- AUTO_INCREMENT for table `cart_items`
 --
 ALTER TABLE `cart_items`
-  MODIFY `cart_item_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
+  MODIFY `cart_item_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
 
 --
 -- AUTO_INCREMENT for table `category`
@@ -358,13 +350,13 @@ ALTER TABLE `product`
 -- AUTO_INCREMENT for table `transaction`
 --
 ALTER TABLE `transaction`
-  MODIFY `transaction_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+  MODIFY `transaction_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
 
 --
 -- AUTO_INCREMENT for table `transaction_detail`
 --
 ALTER TABLE `transaction_detail`
-  MODIFY `transaction_detail_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+  MODIFY `transaction_detail_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
 
 --
 -- Constraints for dumped tables
