@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 17, 2024 at 12:57 PM
+-- Generation Time: Dec 17, 2024 at 01:58 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -20,6 +20,58 @@ SET time_zone = "+00:00";
 --
 -- Database: `mikrotik`
 --
+
+DELIMITER $$
+--
+-- Procedures
+--
+CREATE DEFINER=`root`@`localhost` PROCEDURE `addCustomer` (IN `c_first_name` VARCHAR(100), IN `c_last_name` VARCHAR(100), IN `c_email` VARCHAR(100), IN `c_phone_number` VARCHAR(20), IN `c_customer_address` VARCHAR(255))   BEGIN
+    INSERT INTO customer (first_name, last_name, email, phone_number, customer_address)
+    VALUES (c_first_name, c_last_name, c_email, c_phone_number, c_customer_address);
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `Get_Customer_Transactions` (IN `customer_id` INT)   BEGIN
+    SELECT 
+        t.transaction_id,
+        t.transaction_date,
+        td.product_id,
+        p.product_name,
+        td.quantity,
+        td.total_price
+    FROM 
+        transaction t
+    JOIN 
+        transaction_detail td ON t.transaction_id = td.transaction_id
+    JOIN 
+        product p ON td.product_id = p.product_id
+    WHERE 
+        t.customer_id = customer_id;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `InsertProduct` (IN `p_product_name` VARCHAR(100), IN `p_product_price` DECIMAL(10,2), IN `p_product_description` TEXT, IN `p_category_id` INT, IN `p_product_image` VARCHAR(255), IN `p_product_stock` INT)   BEGIN
+INSERT INTO product (
+product_name,
+product_price,
+product_description,
+category_id,
+product_image,
+product_stock
+) VALUES (
+p_product_name,
+p_product_price,
+p_product_description,
+p_category_id,
+p_product_image,
+p_product_stock
+);
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `InsertTransaction` (IN `p_transaction_id` INT, IN `p_transaction_date` DATETIME, IN `p_customer_id` INT)   BEGIN
+INSERT INTO `transaction` (transaction_id, transaction_date, customer_id)
+VALUES (p_transaction_id, p_transaction_date, p_customer_id);
+END$$
+
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -105,6 +157,23 @@ INSERT INTO `category` (`category_id`, `category_name`) VALUES
 (3, 'antena'),
 (4, 'switch'),
 (5, 'RJ45 Connector');
+
+-- --------------------------------------------------------
+
+--
+-- Stand-in structure for view `ccustomer_transaction_history`
+-- (See below for the actual view)
+--
+CREATE TABLE `ccustomer_transaction_history` (
+`customer_id` int(11)
+,`customer_name` varchar(201)
+,`transaction_id` int(11)
+,`transaction_date` datetime
+,`product_id` int(11)
+,`product_name` varchar(100)
+,`quantity` int(11)
+,`total_price` decimal(10,2)
+);
 
 -- --------------------------------------------------------
 
@@ -197,6 +266,32 @@ INSERT INTO `product` (`product_id`, `product_name`, `product_price`, `product_d
 -- --------------------------------------------------------
 
 --
+-- Stand-in structure for view `product_stock_status`
+-- (See below for the actual view)
+--
+CREATE TABLE `product_stock_status` (
+`product_id` int(11)
+,`product_name` varchar(100)
+,`product_stock` int(11)
+,`stock_status` varchar(12)
+);
+
+-- --------------------------------------------------------
+
+--
+-- Stand-in structure for view `sales_report`
+-- (See below for the actual view)
+--
+CREATE TABLE `sales_report` (
+`product_id` int(11)
+,`product_name` varchar(100)
+,`total_quantity_sold` decimal(32,0)
+,`total_revenue` decimal(32,2)
+);
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `transaction`
 --
 
@@ -266,6 +361,33 @@ INSERT INTO `transaction_detail` (`transaction_detail_id`, `transaction_id`, `pr
 (32, 32, 22, 1, 1500000.00, 'pending', 'uploads/proof.jpeg', ''),
 (33, 32, 1, 2, 1550000.00, 'pending', 'uploads/proof.jpeg', ''),
 (34, 33, 29, 2, 920000.00, 'pending', 'uploads/proof.jpeg', 'sedang diproses');
+
+-- --------------------------------------------------------
+
+--
+-- Structure for view `ccustomer_transaction_history`
+--
+DROP TABLE IF EXISTS `ccustomer_transaction_history`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `ccustomer_transaction_history`  AS SELECT `c`.`customer_id` AS `customer_id`, concat(`c`.`first_name`,' ',`c`.`last_name`) AS `customer_name`, `t`.`transaction_id` AS `transaction_id`, `t`.`transaction_date` AS `transaction_date`, `td`.`product_id` AS `product_id`, `p`.`product_name` AS `product_name`, `td`.`quantity` AS `quantity`, `td`.`total_price` AS `total_price` FROM (((`customer` `c` join `transaction` `t` on(`c`.`customer_id` = `t`.`customer_id`)) join `transaction_detail` `td` on(`t`.`transaction_id` = `td`.`transaction_id`)) join `product` `p` on(`td`.`product_id` = `p`.`product_id`)) ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure for view `product_stock_status`
+--
+DROP TABLE IF EXISTS `product_stock_status`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `product_stock_status`  AS SELECT `p`.`product_id` AS `product_id`, `p`.`product_name` AS `product_name`, `p`.`product_stock` AS `product_stock`, CASE WHEN `p`.`product_stock` = 0 THEN 'Out of Stock' WHEN `p`.`product_stock` <= 10 THEN 'Low Stock' ELSE 'In Stock' END AS `stock_status` FROM `product` AS `p` ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure for view `sales_report`
+--
+DROP TABLE IF EXISTS `sales_report`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `sales_report`  AS SELECT `p`.`product_id` AS `product_id`, `p`.`product_name` AS `product_name`, sum(`td`.`quantity`) AS `total_quantity_sold`, sum(`td`.`total_price`) AS `total_revenue` FROM (`product` `p` join `transaction_detail` `td` on(`p`.`product_id` = `td`.`product_id`)) GROUP BY `p`.`product_id`, `p`.`product_name` ;
 
 --
 -- Indexes for dumped tables
