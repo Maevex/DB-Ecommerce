@@ -28,7 +28,7 @@ if (!in_array($sortOrder, $validSortOrders)) {
 // Query untuk mengambil transaksi
 if ($searchQuery != '') {
     $queryTransactions = "SELECT t.transaction_id, t.transaction_date, 
-                                  p.product_name, td.quantity, td.total_price
+                                  p.product_name, td.quantity, td.total_price, td.status
                            FROM transaction t
                            JOIN transaction_detail td ON t.transaction_id = td.transaction_id
                            JOIN product p ON td.product_id = p.product_id
@@ -39,7 +39,7 @@ if ($searchQuery != '') {
                            LIMIT $startFrom, $transactionsPerPage";
 } else {
     $queryTransactions = "SELECT t.transaction_id, t.transaction_date, 
-                                  p.product_name, td.quantity, td.total_price
+                                  p.product_name, td.quantity, td.total_price, td.status
                            FROM transaction t
                            JOIN transaction_detail td ON t.transaction_id = td.transaction_id
                            JOIN product p ON td.product_id = p.product_id
@@ -150,6 +150,7 @@ $totalPages = ceil($totalTransactions / $transactionsPerPage); // Total halaman
                 <th>Product Name</th>
                 <th>Quantity</th>
                 <th>Total Price</th>
+                <th>Status</th>
                 <th>Action</th>
             </tr>
         </thead>
@@ -162,6 +163,7 @@ $totalPages = ceil($totalTransactions / $transactionsPerPage); // Total halaman
                         <td><?php echo $transaction['product_name']; ?></td>
                         <td><?php echo $transaction['quantity']; ?></td>
                         <td>Rp. <?php echo number_format($transaction['total_price'], 2); ?></td>
+                        <td><?php echo $transaction['status']; ?></td>
                         <td>
                             <a href="transaction_detail.php?transaction_id=<?php echo $transaction['transaction_id']; ?>" class="btn btn-danger btn-sm">Detail</a>
                         </td>

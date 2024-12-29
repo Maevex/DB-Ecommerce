@@ -1,5 +1,6 @@
 <?php
 include 'config.php';
+session_start();
 
 function sanitize($data) {
     return htmlspecialchars(stripslashes(trim($data)));

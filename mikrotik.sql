@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 17, 2024 at 01:58 PM
+-- Generation Time: Dec 29, 2024 at 01:54 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -28,6 +28,29 @@ DELIMITER $$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `addCustomer` (IN `c_first_name` VARCHAR(100), IN `c_last_name` VARCHAR(100), IN `c_email` VARCHAR(100), IN `c_phone_number` VARCHAR(20), IN `c_customer_address` VARCHAR(255))   BEGIN
     INSERT INTO customer (first_name, last_name, email, phone_number, customer_address)
     VALUES (c_first_name, c_last_name, c_email, c_phone_number, c_customer_address);
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `GenerateTransactionData` ()   BEGIN
+    DECLARE i INT DEFAULT 6;
+    DECLARE cust_id INT;
+    DECLARE prod_id INT;
+
+    WHILE i <= 100 DO
+        SET cust_id = FLOOR(4 + RAND() * 10); -- Pilih customer_id random
+        SET prod_id = FLOOR(1 + RAND() * 33); -- Pilih product_id random
+        INSERT INTO `transaction` (`transaction_id`, `transaction_date`, `customer_id`, `admin_id`)
+        VALUES (i, DATE_ADD('2024-12-01', INTERVAL i DAY), cust_id, NULL);
+
+        INSERT INTO `transaction_detail` (`transaction_detail_id`, `transaction_id`, `product_id`, `quantity`, `total_price`, `status`, `payment_proof`, `transaction_description`)
+        VALUES (i, i, prod_id, FLOOR(1 + RAND() * 5), FLOOR(500000 + RAND() * 2000000), 
+                CASE FLOOR(RAND() * 3)
+                    WHEN 0 THEN 'completed'
+                    WHEN 1 THEN 'pending'
+                    ELSE 'cancelled'
+                END, 
+                NULL, CONCAT('Pembelian produk dengan ID ', prod_id));
+        SET i = i + 1;
+    END WHILE;
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `Get_Customer_Transactions` (IN `customer_id` INT)   BEGIN
@@ -254,7 +277,7 @@ CREATE TABLE `product` (
 --
 
 INSERT INTO `product` (`product_id`, `product_name`, `product_price`, `product_description`, `category_id`, `product_image`, `product_stock`) VALUES
-(1, 'Antena Omni Vezatech 15 dbi 2.4 Ghz ( Connect )', 775000.00, 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum', 3, 'images/yy.jpg', 11),
+(1, 'Antena Omni Vezatech 15 dbi 2.4 Ghz ( Connect )', 775000.00, 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum', 3, 'images/yy.jpg', 99),
 (22, 'UBNT Edge Point Router 6 24 V EP-R6 ( Gloria )', 1500000.00, 'LorLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborumx ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum', 1, 'images/ubiquiti.jpg', 22),
 (28, 'UBNT Unifi Switch FLEX USW-FLEX ( Spectrum )', 1688865.00, 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum', 4, 'images/ubiquitiswc.jpeg', 10),
 (29, 'SFP to RJ45 S-RJ01', 460000.00, 'MikroTik S+RJ10 / SFP S RJ10 / SFP MikroTik S+RJ10 ini membuka seluruh dunia dengan kemungkinan konektivitas berkecepatan tinggi, menawarkan kecepatan hingga 10 Gbps', 5, 'images/S-RJ01_2.jpg', 10),
@@ -307,6 +330,11 @@ CREATE TABLE `transaction` (
 --
 
 INSERT INTO `transaction` (`transaction_id`, `transaction_date`, `customer_id`, `admin_id`) VALUES
+(1, '2024-12-01 00:00:00', 4, NULL),
+(2, '2024-12-02 00:00:00', 5, NULL),
+(3, '2024-12-03 00:00:00', 7, NULL),
+(4, '2024-12-04 00:00:00', 8, NULL),
+(5, '2024-12-05 00:00:00', 9, NULL),
 (9, '2024-05-15 11:09:00', 8, NULL),
 (10, '2024-04-21 12:00:00', 12, NULL),
 (11, '2024-03-12 10:00:00', 9, NULL),
@@ -321,7 +349,88 @@ INSERT INTO `transaction` (`transaction_id`, `transaction_date`, `customer_id`, 
 (30, '2024-11-20 08:25:09', 7, NULL),
 (31, '2024-08-21 08:25:09', 7, NULL),
 (32, '2024-12-16 19:04:49', 7, NULL),
-(33, '2024-12-17 18:40:53', 7, NULL);
+(33, '2024-12-17 18:40:53', 7, 1),
+(35, '2024-04-08 00:00:00', 9, NULL),
+(36, '2024-07-07 00:00:00', 12, NULL),
+(37, '2024-12-22 00:00:00', 7, NULL),
+(38, '2024-12-23 00:00:00', 8, NULL),
+(39, '2024-12-24 00:00:00', 9, NULL),
+(40, '2024-12-25 00:00:00', 11, NULL),
+(41, '2024-12-26 00:00:00', 12, NULL),
+(42, '2024-12-27 00:00:00', 13, NULL),
+(43, '2024-12-28 00:00:00', 14, NULL),
+(44, '2024-12-29 00:00:00', 5, NULL),
+(45, '2024-12-01 00:00:00', 4, NULL),
+(46, '2024-12-02 00:00:00', 7, NULL),
+(47, '2024-12-03 00:00:00', 8, NULL),
+(48, '2024-12-04 00:00:00', 9, NULL),
+(49, '2024-12-05 00:00:00', 11, NULL),
+(50, '2024-12-06 00:00:00', 12, NULL),
+(51, '2024-12-07 00:00:00', 13, NULL),
+(52, '2024-12-08 00:00:00', 14, NULL),
+(53, '2024-12-09 00:00:00', 4, NULL),
+(54, '2024-12-10 00:00:00', 5, NULL),
+(55, '2023-12-01 00:00:00', 4, NULL),
+(56, '2023-12-02 00:00:00', 5, NULL),
+(57, '2023-12-03 00:00:00', 7, NULL),
+(58, '2023-12-04 00:00:00', 8, NULL),
+(59, '2023-12-05 00:00:00', 9, NULL),
+(60, '2023-12-06 00:00:00', 11, NULL),
+(61, '2023-12-07 00:00:00', 12, NULL),
+(62, '2023-12-08 00:00:00', 13, NULL),
+(63, '2023-12-09 00:00:00', 14, NULL),
+(64, '2023-12-10 00:00:00', 4, NULL),
+(65, '2023-01-15 00:00:00', 4, NULL),
+(66, '2023-02-18 00:00:00', 5, NULL),
+(67, '2023-03-22 00:00:00', 7, NULL),
+(68, '2023-04-10 00:00:00', 8, NULL),
+(69, '2023-05-14 00:00:00', 9, NULL),
+(70, '2023-06-20 00:00:00', 11, NULL),
+(71, '2023-07-02 00:00:00', 12, NULL),
+(72, '2023-08-25 00:00:00', 13, NULL),
+(73, '2023-09-09 00:00:00', 14, NULL),
+(74, '2023-11-01 00:00:00', 4, NULL),
+(75, '2023-01-25 00:00:00', 5, NULL),
+(76, '2023-02-07 00:00:00', 8, NULL),
+(77, '2023-03-12 00:00:00', 9, NULL),
+(78, '2023-04-15 00:00:00', 11, NULL),
+(79, '2023-05-19 00:00:00', 12, NULL),
+(80, '2023-06-10 00:00:00', 14, NULL),
+(81, '2023-07-13 00:00:00', 4, NULL),
+(82, '2023-08-20 00:00:00', 7, NULL),
+(83, '2023-10-05 00:00:00', 13, NULL),
+(84, '2023-10-18 00:00:00', 5, NULL),
+(85, '2024-06-03 00:00:00', 4, NULL),
+(86, '2024-06-15 00:00:00', 5, NULL),
+(87, '2024-06-25 00:00:00', 7, NULL),
+(88, '2024-09-02 00:00:00', 8, NULL),
+(89, '2024-09-11 00:00:00', 9, NULL),
+(90, '2024-09-22 00:00:00', 11, NULL),
+(91, '2024-10-01 00:00:00', 12, NULL),
+(92, '2024-10-08 00:00:00', 13, NULL),
+(93, '2024-10-18 00:00:00', 14, NULL),
+(94, '2024-10-28 00:00:00', 4, NULL),
+(95, '2024-06-05 00:00:00', 8, NULL),
+(96, '2024-06-12 00:00:00', 9, NULL),
+(97, '2024-06-20 00:00:00', 11, NULL),
+(98, '2024-09-06 00:00:00', 4, NULL),
+(99, '2024-09-15 00:00:00', 7, NULL),
+(100, '2024-09-25 00:00:00', 5, NULL),
+(101, '2024-10-03 00:00:00', 13, NULL),
+(102, '2024-10-07 00:00:00', 14, NULL),
+(103, '2024-10-12 00:00:00', 4, NULL),
+(104, '2024-10-23 00:00:00', 12, NULL),
+(105, '2024-06-07 00:00:00', 12, NULL),
+(106, '2024-06-13 00:00:00', 13, NULL),
+(107, '2024-06-18 00:00:00', 14, NULL),
+(108, '2024-09-10 00:00:00', 4, NULL),
+(109, '2024-09-13 00:00:00', 5, NULL),
+(110, '2024-09-18 00:00:00', 7, NULL),
+(111, '2024-10-02 00:00:00', 8, NULL),
+(112, '2024-10-06 00:00:00', 9, NULL),
+(113, '2024-10-14 00:00:00', 11, NULL),
+(114, '2024-10-22 00:00:00', 12, NULL),
+(134, '2024-06-17 00:00:00', 7, NULL);
 
 -- --------------------------------------------------------
 
@@ -345,6 +454,14 @@ CREATE TABLE `transaction_detail` (
 --
 
 INSERT INTO `transaction_detail` (`transaction_detail_id`, `transaction_id`, `product_id`, `quantity`, `total_price`, `status`, `payment_proof`, `transaction_description`) VALUES
+(1, 1, 1, 2, 1550000.00, 'completed', 'proof1.jpg', 'Pembelian antena omni'),
+(2, 1, 22, 1, 1500000.00, 'completed', 'proof2.jpg', 'Pembelian router Edge Point'),
+(3, 2, 28, 3, 5066595.00, 'pending', '', 'Switch Unifi Switch FLEX'),
+(4, 3, 29, 1, 460000.00, 'cancelled', '', 'Pembelian MikroTik SFP'),
+(5, 4, 30, 4, 2000000.00, 'completed', 'proof3.jpg', 'Dlink Wireless Router'),
+(6, 5, 31, 1, 1850000.00, 'completed', 'proof4.jpg', 'Antena Omni Hyperlink'),
+(7, 5, 32, 2, 3228000.00, 'pending', '', 'Dlink EasySmart Switch'),
+(8, 5, 33, 3, 2013000.00, 'completed', 'proof5.jpg', 'Switch HUB Gigabit'),
 (10, 9, 1, 3, 23250000.00, 'completed', 'uploads/proof.jpeg', 'Pembayaran Berhasil'),
 (11, 10, 30, 1, 500000.00, 'completed', 'uploads/proof.jpeg', 'Pembayaran Berhasil'),
 (12, 11, 22, 2, 3000000.00, 'pending', 'uploads/proof.jpeg', ''),
@@ -360,7 +477,86 @@ INSERT INTO `transaction_detail` (`transaction_detail_id`, `transaction_id`, `pr
 (31, 31, 28, 1, 1688865.00, 'pending', 'uploads/proof.jpeg', ''),
 (32, 32, 22, 1, 1500000.00, 'pending', 'uploads/proof.jpeg', ''),
 (33, 32, 1, 2, 1550000.00, 'pending', 'uploads/proof.jpeg', ''),
-(34, 33, 29, 2, 920000.00, 'pending', 'uploads/proof.jpeg', 'sedang diproses');
+(34, 33, 29, 2, 920000.00, 'completed', 'uploads/proof.jpeg', 'selesai'),
+(36, 36, 22, 1, 1500000.00, 'pending', 'proof_36.jpg', 'Pembayaran menunggu konfirmasi untuk UBNT Edge Point Router'),
+(37, 37, 28, 3, 5066595.00, 'completed', 'proof_37.jpg', 'Pembayaran berhasil untuk UBNT Unifi Switch FLEX'),
+(38, 38, 29, 5, 2300000.00, 'cancelled', '', 'Pembayaran gagal untuk SFP to RJ45 S-RJ01 (Order dibatalkan)'),
+(39, 39, 30, 2, 1000000.00, 'completed', 'proof_39.jpg', 'Pembayaran berhasil untuk Dlink DWR-M910 Wireless Router'),
+(40, 40, 31, 1, 1850000.00, 'pending', 'proof_40.jpg', 'Pembayaran menunggu konfirmasi untuk Antena Omni HG5812U-PRO'),
+(41, 41, 32, 1, 1614000.00, 'completed', 'proof_41.jpg', 'Pembayaran berhasil untuk Dlink 24 Port Switch'),
+(42, 42, 33, 4, 2684000.00, 'completed', 'proof_42.jpg', 'Pembayaran berhasil untuk Switch HUB 8 Port Gigabit'),
+(43, 43, 1, 1, 775000.00, 'pending', 'proof_43.jpg', 'Pembayaran menunggu konfirmasi untuk Antena Omni Vezatech'),
+(44, 44, 28, 2, 3377730.00, 'completed', 'proof_44.jpg', 'Pembayaran berhasil untuk UBNT Unifi Switch FLEX'),
+(45, 45, 1, 3, 2325000.00, 'completed', 'uploads/proof.jpeg', 'Pembayaran berhasil untuk Antena Omni Vezatech'),
+(46, 46, 22, 2, 3000000.00, 'pending', 'uploads/proof.jpeg', 'Pembayaran menunggu konfirmasi untuk UBNT Edge Point Router'),
+(47, 47, 28, 1, 1688865.00, 'completed', 'uploads/proof.jpeg', 'Pembayaran berhasil untuk UBNT Unifi Switch FLEX'),
+(48, 48, 29, 2, 920000.00, 'cancelled', 'uploads/proof.jpeg', 'Pembayaran gagal untuk SFP to RJ45 S-RJ01 (Order dibatalkan)'),
+(49, 49, 30, 4, 2000000.00, 'completed', 'uploads/proof.jpeg', 'Pembayaran berhasil untuk Dlink DWR-M910 Wireless Router'),
+(50, 50, 31, 2, 3700000.00, 'pending', 'uploads/proof.jpeg', 'Pembayaran menunggu konfirmasi untuk Antena Omni HG5812U-PRO'),
+(51, 51, 32, 1, 1614000.00, 'completed', 'uploads/proof.jpeg', 'Pembayaran berhasil untuk Dlink 24 Port Switch'),
+(52, 52, 33, 5, 3355000.00, 'completed', 'uploads/proof.jpeg', 'Pembayaran berhasil untuk Switch HUB 8 Port Gigabit'),
+(53, 53, 1, 4, 3100000.00, 'pending', 'uploads/proof.jpeg', 'Pembayaran menunggu konfirmasi untuk Antena Omni Vezatech'),
+(54, 54, 28, 3, 5066595.00, 'completed', 'uploads/proof.jpeg', 'Pembayaran berhasil untuk UBNT Unifi Switch FLEX'),
+(55, 55, 1, 3, 2325000.00, 'completed', 'uploads/proof.jpeg', 'Pembayaran berhasil untuk Antena Omni Vezatech'),
+(56, 56, 22, 2, 3000000.00, 'cancelled', 'uploads/proof.jpeg', 'Pembayaran gagal untuk UBNT Edge Point Router (Order dibatalkan)'),
+(57, 57, 28, 1, 1688865.00, 'completed', 'uploads/proof.jpeg', 'Pembayaran berhasil untuk UBNT Unifi Switch FLEX'),
+(58, 58, 29, 5, 2300000.00, 'pending', 'uploads/proof.jpeg', 'Pembayaran menunggu konfirmasi untuk SFP to RJ45 S-RJ01'),
+(59, 59, 30, 2, 1000000.00, 'completed', 'uploads/proof.jpeg', 'Pembayaran berhasil untuk Dlink DWR-M910 Wireless Router'),
+(60, 60, 31, 2, 3700000.00, 'completed', 'uploads/proof.jpeg', 'Pembayaran berhasil untuk Antena Omni HG5812U-PRO'),
+(61, 61, 32, 1, 1614000.00, 'pending', 'uploads/proof.jpeg', 'Pembayaran menunggu konfirmasi untuk Dlink 24 Port Switch'),
+(62, 62, 33, 3, 2013000.00, 'completed', 'uploads/proof.jpeg', 'Pembayaran berhasil untuk Switch HUB 8 Port Gigabit'),
+(63, 63, 1, 1, 775000.00, 'cancelled', 'uploads/proof.jpeg', 'Pembayaran gagal untuk Antena Omni Vezatech (Order dibatalkan)'),
+(64, 64, 28, 2, 3377730.00, 'completed', 'uploads/proof.jpeg', 'Pembayaran berhasil untuk UBNT Unifi Switch FLEX'),
+(65, 65, 1, 2, 1550000.00, 'completed', 'uploads/proof.jpeg', 'Pembayaran berhasil untuk Antena Omni Vezatech'),
+(66, 66, 22, 1, 1500000.00, 'cancelled', 'uploads/proof.jpeg', 'Pembayaran gagal untuk UBNT Edge Point Router (Order dibatalkan)'),
+(67, 67, 28, 3, 5066595.00, 'pending', 'uploads/proof.jpeg', 'Pembayaran menunggu konfirmasi untuk UBNT Unifi Switch FLEX'),
+(68, 68, 29, 4, 1840000.00, 'completed', 'uploads/proof.jpeg', 'Pembayaran berhasil untuk SFP to RJ45 S-RJ01'),
+(69, 69, 30, 1, 500000.00, 'completed', 'uploads/proof.jpeg', 'Pembayaran berhasil untuk Dlink DWR-M910 Wireless Router'),
+(70, 70, 31, 1, 1850000.00, 'completed', 'uploads/proof.jpeg', 'Pembayaran berhasil untuk Antena Omni HG5812U-PRO'),
+(71, 71, 32, 2, 3228000.00, 'pending', 'uploads/proof.jpeg', 'Pembayaran menunggu konfirmasi untuk Dlink 24 Port Switch'),
+(72, 72, 33, 1, 671000.00, 'completed', 'uploads/proof.jpeg', 'Pembayaran berhasil untuk Switch HUB 8 Port Gigabit'),
+(73, 73, 1, 1, 775000.00, 'completed', 'uploads/proof.jpeg', 'Pembayaran berhasil untuk Antena Omni Vezatech'),
+(74, 74, 28, 3, 5066595.00, 'cancelled', 'uploads/proof.jpeg', 'Pembayaran gagal untuk UBNT Unifi Switch FLEX (Order dibatalkan)'),
+(75, 75, 28, 2, 3377730.00, 'completed', 'uploads/proof.jpeg', 'Pembayaran berhasil untuk UBNT Unifi Switch FLEX'),
+(76, 76, 30, 1, 500000.00, 'completed', 'uploads/proof.jpeg', 'Pembayaran berhasil untuk Dlink DWR-M910 Wireless Router'),
+(77, 77, 29, 3, 1380000.00, 'pending', 'uploads/proof.jpeg', 'Pembayaran menunggu konfirmasi untuk SFP to RJ45 S-RJ01'),
+(78, 78, 32, 1, 1614000.00, 'completed', 'uploads/proof.jpeg', 'Pembayaran berhasil untuk Dlink 24 Port Switch'),
+(79, 79, 33, 2, 1342000.00, 'completed', 'uploads/proof.jpeg', 'Pembayaran berhasil untuk Switch HUB 8 Port Gigabit'),
+(80, 80, 1, 3, 2325000.00, 'cancelled', 'uploads/proof.jpeg', 'Pembayaran gagal untuk Antena Omni Vezatech (Order dibatalkan)'),
+(81, 81, 22, 1, 1500000.00, 'completed', 'uploads/proof.jpeg', 'Pembayaran berhasil untuk UBNT Edge Point Router'),
+(82, 82, 31, 1, 1850000.00, 'completed', 'uploads/proof.jpeg', 'Pembayaran berhasil untuk Antena Omni HG5812U-PRO'),
+(83, 83, 28, 2, 3377730.00, 'completed', 'uploads/proof.jpeg', 'Pembayaran berhasil untuk UBNT Unifi Switch FLEX'),
+(84, 84, 32, 2, 3228000.00, 'pending', 'uploads/proof.jpeg', 'Pembayaran menunggu konfirmasi untuk Dlink 24 Port Switch'),
+(85, 85, 29, 2, 920000.00, 'completed', 'uploads/proof.jpeg', 'Pembayaran berhasil untuk SFP to RJ45 S-RJ01'),
+(86, 86, 32, 1, 1614000.00, 'pending', 'uploads/proof.jpeg', 'Pembayaran menunggu konfirmasi untuk Dlink 24 Port Switch'),
+(87, 87, 28, 1, 1688865.00, 'completed', 'uploads/proof.jpeg', 'Pembayaran berhasil untuk UBNT Unifi Switch FLEX'),
+(88, 88, 30, 1, 500000.00, 'completed', 'uploads/proof.jpeg', 'Pembayaran berhasil untuk Dlink DWR-M910 Wireless Router'),
+(89, 89, 33, 1, 671000.00, 'completed', 'uploads/proof.jpeg', 'Pembayaran berhasil untuk Switch HUB 8 Port Gigabit'),
+(90, 90, 31, 1, 1850000.00, 'cancelled', 'uploads/proof.jpeg', 'Pembayaran gagal untuk Antena Omni HG5812U-PRO (Order dibatalkan)'),
+(91, 91, 1, 2, 1550000.00, 'completed', 'uploads/proof.jpeg', 'Pembayaran berhasil untuk Antena Omni Vezatech'),
+(92, 92, 29, 3, 1380000.00, 'completed', 'uploads/proof.jpeg', 'Pembayaran berhasil untuk SFP to RJ45 S-RJ01'),
+(93, 93, 22, 1, 1500000.00, 'pending', 'uploads/proof.jpeg', 'Pembayaran menunggu konfirmasi untuk UBNT Edge Point Router'),
+(94, 94, 32, 1, 1614000.00, 'completed', 'uploads/proof.jpeg', 'Pembayaran berhasil untuk Dlink 24 Port Switch'),
+(95, 95, 22, 1, 1500000.00, 'completed', 'uploads/proof.jpeg', 'Pembayaran berhasil untuk UBNT Edge Point Router'),
+(96, 96, 28, 1, 1688865.00, 'pending', 'uploads/proof.jpeg', 'Pembayaran menunggu konfirmasi untuk UBNT Unifi Switch FLEX'),
+(97, 97, 29, 2, 920000.00, 'completed', 'uploads/proof.jpeg', 'Pembayaran berhasil untuk SFP to RJ45 S-RJ01'),
+(98, 98, 30, 1, 500000.00, 'completed', 'uploads/proof.jpeg', 'Pembayaran berhasil untuk Dlink DWR-M910 Wireless Router'),
+(99, 99, 31, 2, 3700000.00, 'completed', 'uploads/proof.jpeg', 'Pembayaran berhasil untuk Antena Omni HG5812U-PRO'),
+(100, 100, 33, 3, 2013000.00, 'cancelled', 'uploads/proof.jpeg', 'Pembayaran gagal untuk Switch HUB 8 Port Gigabit (Order dibatalkan)'),
+(101, 101, 1, 1, 775000.00, 'completed', 'uploads/proof.jpeg', 'Pembayaran berhasil untuk Antena Omni Vezatech'),
+(102, 102, 32, 1, 1614000.00, 'completed', 'uploads/proof.jpeg', 'Pembayaran berhasil untuk Dlink 24 Port Switch'),
+(103, 103, 28, 2, 3377730.00, 'pending', 'uploads/proof.jpeg', 'Pembayaran menunggu konfirmasi untuk UBNT Unifi Switch FLEX'),
+(104, 104, 29, 1, 460000.00, 'completed', 'uploads/proof.jpeg', 'Pembayaran berhasil untuk SFP to RJ45 S-RJ01'),
+(105, 105, 29, 1, 460000.00, 'completed', 'uploads/proof.jpeg', 'Pembayaran berhasil untuk SFP to RJ45 S-RJ01'),
+(106, 106, 31, 1, 1850000.00, 'completed', 'uploads/proof.jpeg', 'Pembayaran berhasil untuk Antena Omni HG5812U-PRO'),
+(107, 107, 33, 2, 1342000.00, 'pending', 'uploads/proof.jpeg', 'Pembayaran menunggu konfirmasi untuk Switch HUB 8 Port Gigabit'),
+(108, 108, 1, 3, 2325000.00, 'completed', 'uploads/proof.jpeg', 'Pembayaran berhasil untuk Antena Omni Vezatech'),
+(109, 109, 22, 1, 1500000.00, 'completed', 'uploads/proof.jpeg', 'Pembayaran berhasil untuk UBNT Edge Point Router'),
+(110, 110, 28, 1, 1688865.00, 'cancelled', 'uploads/proof.jpeg', 'Pembayaran gagal untuk UBNT Unifi Switch FLEX (Order dibatalkan)'),
+(111, 111, 30, 1, 500000.00, 'completed', 'uploads/proof.jpeg', 'Pembayaran berhasil untuk Dlink DWR-M910 Wireless Router'),
+(112, 112, 32, 2, 3228000.00, 'pending', 'uploads/proof.jpeg', 'Pembayaran menunggu konfirmasi untuk Dlink 24 Port Switch'),
+(113, 113, 29, 1, 460000.00, 'completed', 'uploads/proof.jpeg', 'Pembayaran berhasil untuk SFP to RJ45 S-RJ01'),
+(114, 114, 31, 1, 1850000.00, 'completed', 'uploads/proof.jpeg', 'Pembayaran berhasil untuk Antena Omni HG5812U-PRO');
 
 -- --------------------------------------------------------
 
@@ -508,13 +704,13 @@ ALTER TABLE `product`
 -- AUTO_INCREMENT for table `transaction`
 --
 ALTER TABLE `transaction`
-  MODIFY `transaction_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
+  MODIFY `transaction_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=135;
 
 --
 -- AUTO_INCREMENT for table `transaction_detail`
 --
 ALTER TABLE `transaction_detail`
-  MODIFY `transaction_detail_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
+  MODIFY `transaction_detail_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=115;
 
 --
 -- Constraints for dumped tables
