@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 29, 2024 at 01:54 PM
+-- Generation Time: Dec 30, 2024 at 11:00 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -311,6 +311,27 @@ CREATE TABLE `sales_report` (
 ,`total_quantity_sold` decimal(32,0)
 ,`total_revenue` decimal(32,2)
 );
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `suplier`
+--
+
+CREATE TABLE `suplier` (
+  `suplier_id` int(11) NOT NULL,
+  `product_id` int(11) DEFAULT NULL,
+  `product_stock` int(100) DEFAULT NULL,
+  `product_price` decimal(10,0) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `suplier`
+--
+
+INSERT INTO `suplier` (`suplier_id`, `product_id`, `product_stock`, `product_price`) VALUES
+(1, 31, 234, 700000),
+(2, 1, 100, 1750000);
 
 -- --------------------------------------------------------
 
@@ -639,6 +660,13 @@ ALTER TABLE `product`
   ADD KEY `category_id` (`category_id`);
 
 --
+-- Indexes for table `suplier`
+--
+ALTER TABLE `suplier`
+  ADD PRIMARY KEY (`suplier_id`),
+  ADD KEY `fk_product` (`product_id`);
+
+--
 -- Indexes for table `transaction`
 --
 ALTER TABLE `transaction`
@@ -701,6 +729,12 @@ ALTER TABLE `product`
   MODIFY `product_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
 
 --
+-- AUTO_INCREMENT for table `suplier`
+--
+ALTER TABLE `suplier`
+  MODIFY `suplier_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
 -- AUTO_INCREMENT for table `transaction`
 --
 ALTER TABLE `transaction`
@@ -740,6 +774,12 @@ ALTER TABLE `login`
 --
 ALTER TABLE `product`
   ADD CONSTRAINT `product_ibfk_1` FOREIGN KEY (`category_id`) REFERENCES `category` (`category_id`);
+
+--
+-- Constraints for table `suplier`
+--
+ALTER TABLE `suplier`
+  ADD CONSTRAINT `fk_product` FOREIGN KEY (`product_id`) REFERENCES `product` (`product_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `transaction`
